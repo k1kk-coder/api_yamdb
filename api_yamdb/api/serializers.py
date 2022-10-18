@@ -41,7 +41,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
-        read_only_fields = ('title',)
 
     def validate_score(self, value):
         if not (1 <= value <= 10):
@@ -57,4 +56,3 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
-        read_only_fields = ('title',)
