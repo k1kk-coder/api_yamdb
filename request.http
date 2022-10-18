@@ -22,8 +22,12 @@ content-type: application/json
 
 {
     "name": "32423423",
-    "slug": "ewrwerws"
+    "slug": "ewr2werws"
 }
+
+###
+
+DELETE http://127.0.0.1:8000/api/v1/genres/ewr2werws/
 
 ###
 
