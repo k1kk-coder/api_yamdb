@@ -1,0 +1,45 @@
+
+GET http://127.0.0.1:8000/api/v1/categories/
+
+###
+
+POST http://127.0.0.1:8000/api/v1/categories/
+content-type: application/json
+
+{
+    "name": "32423423",
+    "slug": "ewrwerws"
+}
+
+###
+
+GET http://127.0.0.1:8000/api/v1/genres/
+
+###
+
+POST http://127.0.0.1:8000/api/v1/genres/
+content-type: application/json
+
+{
+    "name": "32423423",
+    "slug": "ewrwerws"
+}
+
+###
+
+GET http://127.0.0.1:8000/api/v1/titles/
+
+###
+
+POST http://127.0.0.1:8000/api/v1/titles/
+content-type: application/json
+
+{
+    "name": "string",
+    "year": 2012,
+    "description": "string",
+    "genre": [
+        "string"
+    ],
+    "category": "string"
+}
