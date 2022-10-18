@@ -1,8 +1,9 @@
 import csv
 
 from django.core.management.base import BaseCommand
-from reviews.models import Category, Genre, TitlesGenres, Title, Review
 from django.db.utils import IntegrityError
+from reviews.models import (Category, Comment, Genre, Review, Title,
+                            TitlesGenres, User)
 
 
 class Command(BaseCommand):
@@ -16,7 +17,7 @@ class Command(BaseCommand):
             for row in reader:
                 slug = row[2]
                 try:
-                    Category.objects.create(name=row[1], slug=slug)
+                    Category.objects.create(id=row[0], name=row[1], slug=slug)
                 except IntegrityError as error:
                     print(
                         f'Category. Попытка записи неуникального'
@@ -24,7 +25,7 @@ class Command(BaseCommand):
                 except IndexError as error:
                     print(f'Category. Ошибка в структуре файла: {error}')
                 except Exception as error:
-                    print(f'Category. Некласифицированная ошибка: {error}')
+                    print(f'Category. Неклассифицированная ошибка: {error}')
 
     def load_genres(self):
         url = 'static/data/genre.csv'
@@ -34,7 +35,7 @@ class Command(BaseCommand):
             for row in reader:
                 slug = row[2]
                 try:
-                    Genre.objects.create(name=row[1], slug=slug)
+                    Genre.objects.create(id=row[0], name=row[1], slug=slug)
                 except IntegrityError as error:
                     print(
                         f'Genre. Попытка записи неуникального значения {slug}:'
@@ -42,7 +43,7 @@ class Command(BaseCommand):
                 except IndexError as error:
                     print(f'Genre. Ошибка в структуре файла: {error}')
                 except Exception as error:
-                    print(f'Genre. Некласифицированная ошибка: {error}')
+                    print(f'Genre. Неклассифицированная ошибка: {error}')
 
     def load_title_genres(self):
         url = 'static/data/genre_title.csv'
@@ -52,6 +53,7 @@ class Command(BaseCommand):
             for row in reader:
                 try:
                     TitlesGenres.objects.create(
+                        id=row[0],
                         title=Title.objects.get(id=row[1]),
                         genre=Genre.objects.get(id=row[2]))
                 except IntegrityError as error:
@@ -61,7 +63,8 @@ class Command(BaseCommand):
                 except IndexError as error:
                     print(f'TitlesGenres. Ошибка в структуре файла: {error}')
                 except Exception as error:
-                    print(f'TitlesGenres. Некласифицированная ошибка: {error}')
+                    print(f'TitlesGenres.'
+                          f'Неклассифицированная ошибка: {error}')
 
     def load_titles(self):
         url = 'static/data/titles.csv'
@@ -71,13 +74,34 @@ class Command(BaseCommand):
             for row in reader:
                 try:
                     Title.objects.create(
+                        id=row[0],
                         name=row[1],
                         year=row[2],
                         category=Category.objects.get(id=row[3]))
                 except IndexError as error:
                     print(f'Title. Ошибка в структуре файла: {error}')
                 except Exception as error:
-                    print(f'Title. Некласифицированная ошибка: {error}')
+                    print(f'Title. Неклассифицированная ошибка: {error}')
+
+    def load_users(self):
+        url = 'static/data/users.csv'
+        with open(url, 'rt', encoding='UTF-8') as f:
+            reader = csv.reader(f, dialect="excel")
+            next(reader, None)
+            for row in reader:
+                try:
+                    User.objects.create(
+                        id=row[0],
+                        username=row[1],
+                        email=row[2],
+                        role=row[3],
+                        bio=row[4],
+                        first_name=row[5],
+                        last_name=row[6])
+                except IndexError as error:
+                    print(f'User. Ошибка в структуре файла: {error}')
+                except Exception as error:
+                    print(f'User. Неклассифицированная ошибка: {error}')
 
     def load_reviews(self):
         url = 'static/data/review.csv'
@@ -87,19 +111,40 @@ class Command(BaseCommand):
             for row in reader:
                 try:
                     Review.objects.create(
+                        id=row[0],
                         title=Title.objects.get(id=row[1]),
                         text=row[2],
-                        author=row[3],
-                        score=row[3],
+                        author=User.objects.get(id=row[3]),
+                        score=row[4],
+                        pub_date=row[5])
+                except IndexError as error:
+                    print(f'Review. Ошибка в структуре файла: {error}')
+                except Exception as error:
+                    print(f'Review. Неклассифицированная ошибка: {error}')
+
+    def load_comments(self):
+        url = 'static/data/comments.csv'
+        with open(url, 'rt', encoding='UTF-8') as f:
+            reader = csv.reader(f, dialect="excel")
+            next(reader, None)
+            for row in reader:
+                try:
+                    Comment.objects.create(
+                        id=row[0],
+                        review=Review.objects.get(id=row[1]),
+                        text=row[2],
+                        author=User.objects.get(id=row[3]),
                         pub_date=row[4])
                 except IndexError as error:
-                    print(f'Title. Ошибка в структуре файла: {error}')
+                    print(f'Review. Ошибка в структуре файла: {error}')
                 except Exception as error:
-                    print(f'Title. Некласифицированная ошибка: {error}')
+                    print(f'Review. Неклассифицированная ошибка: {error}')
 
     def handle(self, *args, **kwargs):
         self.load_categories()
         self.load_titles()
         self.load_genres()
         self.load_title_genres()
-        # self.load_reviews() не работает, ужна модель пользователя
+        self.load_users()
+        self.load_reviews()
+        self.load_comments()

@@ -1,7 +1,25 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth import get_user_model
 
-User = get_user_model()
+CHOICES = (
+    ('user', 'USER'),
+    ('moderator', 'MODERATOR'),
+    ('admin', 'ADMIN')
+)
+
+
+class User(AbstractUser):
+    bio = models.TextField(
+        verbose_name='Биография',
+        blank=True,
+    )
+
+    role = models.CharField(
+        max_length=20,
+        verbose_name='Роль',
+        default='user',
+        choices=CHOICES,
+    )
 
 
 class Category(models.Model):
@@ -56,9 +74,6 @@ class TitlesGenres(models.Model):
 
 
 class Review(models.Model):
-    '''Модель User подключил пока стандартную.
-    Поле author сделал пока необязательным
-    до создания модели user и создания пользователя.'''
     text = models.TextField()
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
@@ -69,13 +84,10 @@ class Review(models.Model):
         blank=True
     )
     score = models.IntegerField()
-    pub_date = models.DateField(blank=True)
+    pub_date = models.DateTimeField(blank=True)
 
 
 class Comment(models.Model):
-    '''Модель User подключил пока стандартную.
-    Поле author сделал пока необязательным
-    до создания модели user и создания пользователя.'''
     text = models.TextField()
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, related_name='comments'
@@ -85,4 +97,4 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         blank=True
     )
-    pub_date = models.DateField(blank=True)
+    pub_date = models.DateTimeField(blank=True)

@@ -55,3 +55,15 @@ content-type: application/json
     ],
     "category": "string"
 }
+
+###
+
+GET http://127.0.0.1:8000/api/v1/users/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/titles/6/reviews/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/titles/5/reviews/6/comments/

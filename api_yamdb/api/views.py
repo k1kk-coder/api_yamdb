@@ -1,9 +1,9 @@
 from rest_framework import mixins, viewsets
-from reviews.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
-                             TitleSerializer)
+                             TitleSerializer, UserSerializer)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -38,3 +38,8 @@ class CategoryViewSet(mixins.CreateModelMixin,
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
