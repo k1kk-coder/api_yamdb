@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from django.db.models import Avg
 
-from titles.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title
 
 User = get_user_model()
 
@@ -20,10 +21,14 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Title
         fields = '__all__'
+
+    def get_rating(self, obj):
+        return round(obj.reviews.aggregate(Avg('score'))['score__avg'])
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -37,6 +42,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
         read_only_fields = ('title',)
+
+    def validate_score(self, value):
+        if not (1 <= value <= 10):
+            raise serializers.ValidationError('Поставьте оценку от 1 до 10')
+        return value
 
 
 class CommentSerializer(serializers.ModelSerializer):
