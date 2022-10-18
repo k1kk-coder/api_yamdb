@@ -13,6 +13,14 @@ content-type: application/json
 
 ###
 
+DELETE http://127.0.0.1:8000/api/v1/categories/movie/
+###
+DELETE http://127.0.0.1:8000/api/v1/categories/book/
+###
+DELETE http://127.0.0.1:8000/api/v1/categories/music/
+
+###
+
 GET http://127.0.0.1:8000/api/v1/genres/
 
 ###

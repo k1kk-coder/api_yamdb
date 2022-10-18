@@ -23,8 +23,8 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(max_length=200)
     year = models.IntegerField()
-    rating = models.IntegerField(blank=True)
-    description = models.TextField(blank=True)
+    rating = models.IntegerField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL,
         related_name="titles",
