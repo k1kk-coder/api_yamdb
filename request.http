@@ -8,7 +8,7 @@ content-type: application/json
 
 {
     "name": "32423423",
-    "slug": "ewrwerws"
+    "slug": "cewrwsswer22ws"
 }
 
 ###
@@ -30,12 +30,16 @@ content-type: application/json
 
 {
     "name": "32423423",
-    "slug": "ewr2werws"
+    "slug": "ewwwr2werws"
 }
 
 ###
 
 DELETE http://127.0.0.1:8000/api/v1/genres/ewr2werws/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/users/
 
 ###
 
@@ -47,23 +51,16 @@ POST http://127.0.0.1:8000/api/v1/titles/
 content-type: application/json
 
 {
-    "name": "string",
+    "name": "werwrw",
     "year": 2012,
-    "description": "string",
-    "genre": [
-        "string"
-    ],
-    "category": "string"
+    "description": "sadasdada",
+    "genre": ["drama", "comedy"],
+    "category": "movie"
 }
-
-###
-
-GET http://127.0.0.1:8000/api/v1/users/
-
-###
-
-GET http://127.0.0.1:8000/api/v1/titles/6/reviews/
-
 ###
 
 GET http://127.0.0.1:8000/api/v1/titles/5/reviews/6/comments/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/titles/2/

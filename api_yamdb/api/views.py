@@ -9,7 +9,6 @@ from api.serializers import (CategorySerializer, CommentSerializer,
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    pagination_class = None
 
 
 class GenreViewSet(mixins.CreateModelMixin,
@@ -32,7 +31,6 @@ class CategoryViewSet(mixins.CreateModelMixin,
                       viewsets.GenericViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    lookup_field = 'slug'
 
 
 class CommentViewSet(viewsets.ModelViewSet):

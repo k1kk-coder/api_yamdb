@@ -51,8 +51,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre,
         through='TitlesGenres',
-        related_name="titles",
-        blank=True)
+        through_fields=('title', 'genre'))
 
     def __str__(self) -> str:
         return self.name
@@ -62,15 +61,15 @@ class TitlesGenres(models.Model):
     genre = models.ForeignKey(Genre, on_delete=models.SET_NULL, null=True)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return f'{self.genre} - {self.title}'
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=['genre', 'title'],
                 name='unique follow')
         ]
+
+    def __str__(self):
+        return f'{self.genre} - {self.title}'
 
 
 class Review(models.Model):
