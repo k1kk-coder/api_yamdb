@@ -1,5 +1,7 @@
 import csv
+import os
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from reviews.models import (Category, Comment, Genre, Review, Title,
@@ -10,7 +12,8 @@ class Command(BaseCommand):
     help = 'The Data loader to DB from csv files'
 
     def load_categories(self):
-        url = 'static/data/category.csv'
+        url = os.path.join(
+            settings.STATICFILES_DIRS[0], 'data/category.csv')
         with open(url, 'rt', encoding='UTF-8') as f:
             reader = csv.reader(f, dialect="excel")
             next(reader, None)
@@ -28,7 +31,8 @@ class Command(BaseCommand):
                     print(f'Category. Неклассифицированная ошибка: {error}')
 
     def load_genres(self):
-        url = 'static/data/genre.csv'
+        url = os.path.join(
+            settings.STATICFILES_DIRS[0], 'data/genre.csv')
         with open(url, 'rt', encoding='UTF-8') as f:
             reader = csv.reader(f, dialect="excel")
             next(reader, None)
@@ -46,7 +50,8 @@ class Command(BaseCommand):
                     print(f'Genre. Неклассифицированная ошибка: {error}')
 
     def load_title_genres(self):
-        url = 'static/data/genre_title.csv'
+        url = os.path.join(
+            settings.STATICFILES_DIRS[0], 'data/genre_title.csv')
         with open(url, 'rt', encoding='UTF-8') as f:
             reader = csv.reader(f, dialect="excel")
             next(reader, None)
@@ -67,7 +72,8 @@ class Command(BaseCommand):
                           f'Неклассифицированная ошибка: {error}')
 
     def load_titles(self):
-        url = 'static/data/titles.csv'
+        url = os.path.join(
+            settings.STATICFILES_DIRS[0], 'data/titles.csv')
         with open(url, 'rt', encoding='UTF-8') as f:
             reader = csv.reader(f, dialect="excel")
             next(reader, None)
@@ -84,7 +90,8 @@ class Command(BaseCommand):
                     print(f'Title. Неклассифицированная ошибка: {error}')
 
     def load_users(self):
-        url = 'static/data/users.csv'
+        url = os.path.join(
+            settings.STATICFILES_DIRS[0], 'data/users.csv')
         with open(url, 'rt', encoding='UTF-8') as f:
             reader = csv.reader(f, dialect="excel")
             next(reader, None)
@@ -104,7 +111,8 @@ class Command(BaseCommand):
                     print(f'User. Неклассифицированная ошибка: {error}')
 
     def load_reviews(self):
-        url = 'static/data/review.csv'
+        url = os.path.join(
+            settings.STATICFILES_DIRS[0], 'data/review.csv')
         with open(url, 'rt', encoding='UTF-8') as f:
             reader = csv.reader(f, dialect="excel")
             next(reader, None)
@@ -123,7 +131,8 @@ class Command(BaseCommand):
                     print(f'Review. Неклассифицированная ошибка: {error}')
 
     def load_comments(self):
-        url = 'static/data/comments.csv'
+        url = os.path.join(
+            settings.STATICFILES_DIRS[0], 'data/comments.csv')
         with open(url, 'rt', encoding='UTF-8') as f:
             reader = csv.reader(f, dialect="excel")
             next(reader, None)

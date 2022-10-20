@@ -6,7 +6,11 @@ from api.serializers import (CategorySerializer, CommentSerializer,
                              TitleSerializer, UserSerializer)
 
 
-class TitleViewSet(viewsets.ModelViewSet):
+class TitleViewSet(mixins.CreateModelMixin,
+                   mixins.ListModelMixin,
+                   mixins.DestroyModelMixin,
+                   mixins.UpdateModelMixin,
+                   viewsets.GenericViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
 

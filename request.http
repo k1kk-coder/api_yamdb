@@ -8,7 +8,7 @@ content-type: application/json
 
 {
     "name": "32423423",
-    "slug": "cewrwsswer22ws"
+    "slug": "cewrswsswer22ws"
 }
 
 ###
@@ -30,12 +30,12 @@ content-type: application/json
 
 {
     "name": "32423423",
-    "slug": "ewwwr2werws"
+    "slug": "ewwwwr2werws"
 }
 
 ###
 
-DELETE http://127.0.0.1:8000/api/v1/genres/ewr2werws/
+DELETE http://127.0.0.1:8000/api/v1/genres/ewwwwr2werws/
 
 ###
 
@@ -57,6 +57,7 @@ content-type: application/json
     "genre": ["drama", "comedy"],
     "category": "movie"
 }
+
 ###
 
 GET http://127.0.0.1:8000/api/v1/titles/5/reviews/6/comments/
@@ -64,3 +65,21 @@ GET http://127.0.0.1:8000/api/v1/titles/5/reviews/6/comments/
 ###
 
 GET http://127.0.0.1:8000/api/v1/titles/2/
+
+###
+
+PATCH http://127.0.0.1:8000/api/v1/titles/48/
+content-type: application/json
+
+{
+    "name": "werwrw",
+    "year": 2012,
+    "description": "sadasdada",
+    "genre": ["drama", "comedy"],
+    "category": "music"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/v1/titles/49/
+ 
