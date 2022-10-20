@@ -1,0 +1,85 @@
+
+GET http://127.0.0.1:8000/api/v1/categories/
+
+###
+
+POST http://127.0.0.1:8000/api/v1/categories/
+content-type: application/json
+
+{
+    "name": "32423423",
+    "slug": "cewrswsswer22ws"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/v1/categories/movie/
+###
+DELETE http://127.0.0.1:8000/api/v1/categories/book/
+###
+DELETE http://127.0.0.1:8000/api/v1/categories/music/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/genres/
+
+###
+
+POST http://127.0.0.1:8000/api/v1/genres/
+content-type: application/json
+
+{
+    "name": "32423423",
+    "slug": "ewwwwr2werws"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/v1/genres/ewwwwr2werws/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/users/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/titles/
+
+###
+
+POST http://127.0.0.1:8000/api/v1/titles/
+content-type: application/json
+
+{
+    "name": "werwrw",
+    "year": 2012,
+    "description": "sadasdada",
+    "genre": ["drama", "comedy"],
+    "category": "movie"
+}
+
+###
+
+GET http://127.0.0.1:8000/api/v1/titles/5/reviews/6/comments/
+
+###
+
+GET http://127.0.0.1:8000/api/v1/titles/2/
+
+###
+
+PATCH http://127.0.0.1:8000/api/v1/titles/48/
+content-type: application/json
+
+{
+    "name": "werwrw",
+    "year": 2012,
+    "description": "sadasdada",
+    "genre": ["drama", "comedy"],
+    "category": "music"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/v1/titles/49/
+ 
