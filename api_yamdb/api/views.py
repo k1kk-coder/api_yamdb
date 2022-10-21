@@ -1,5 +1,6 @@
 from rest_framework import mixins, viewsets
-from reviews.models import Category, Comment, Genre, Review, Title, User
+from reviews.models import Category, Genre, Review, Title, User
+from django.shortcuts import get_object_or_404
 
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
@@ -25,8 +26,17 @@ class GenreViewSet(mixins.CreateModelMixin,
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, pk=title_id)
+        return title.reviews.all()
+
+    def perform_create(self, serializer):
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, pk=title_id)
+        serializer.save(author=self.request.user, title=title)
 
 
 class CategoryViewSet(mixins.CreateModelMixin,
@@ -38,8 +48,19 @@ class CategoryViewSet(mixins.CreateModelMixin,
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        review_id = self.kwargs.get('review_id')
+        review = get_object_or_404(Review, pk=review_id)
+        return review.comments.all()
+
+    def perform_create(self, serializer):
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, pk=title_id)
+        review_id = self.kwargs.get('review_id')
+        review = get_object_or_404(Review, pk=review_id)
+        serializer.save(author=self.request.user, title=title, review=review)
 
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -87,7 +87,10 @@ class Review(models.Model):
         blank=True
     )
     score = models.IntegerField()
-    pub_date = models.DateTimeField(blank=True)
+    pub_date = models.DateField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        unique_together = ('author', 'title')
 
 
 class Comment(models.Model):
@@ -100,4 +103,4 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         blank=True
     )
-    pub_date = models.DateTimeField(blank=True)
+    pub_date = models.DateField('Дата публикации', auto_now_add=True)
