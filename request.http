@@ -64,11 +64,11 @@ GET http://127.0.0.1:8000/api/v1/titles/5/reviews/6/comments/
 
 ###
 
-GET http://127.0.0.1:8000/api/v1/titles/2/
+GET http://127.0.0.1:8000/api/v1/titles/33/
 
 ###
 
-PATCH http://127.0.0.1:8000/api/v1/titles/48/
+PUT http://127.0.0.1:8000/api/v1/titles/35/
 content-type: application/json
 
 {
@@ -81,5 +81,5 @@ content-type: application/json
 
 ###
 
-DELETE http://127.0.0.1:8000/api/v1/titles/49/
+DELETE http://127.0.0.1:8000/api/v1/titles/33/
  
