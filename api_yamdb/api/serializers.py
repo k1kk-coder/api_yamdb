@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db.models import Avg
-
+from rest_framework.validators import UniqueValidator
 from reviews.models import (Category, Comment, Genre, Review, Title,
                             User)
 
@@ -99,3 +99,25 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+
+
+class SignupSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+    email = serializers.EmailField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+    def validate_username_not_me(self, value):
+        if value == 'me':
+            raise serializers.ValidationError("Your username can't be 'me'")
+        return value
