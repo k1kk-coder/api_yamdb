@@ -1,5 +1,8 @@
-from rest_framework import mixins, viewsets, status
+from rest_framework import mixins, viewsets, status, permissions
 from rest_framework.decorators import api_view
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import permission_classes
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.response import Response
 from django.core.mail import send_mail
@@ -8,7 +11,7 @@ from reviews.models import Category, Genre, Review, Title, User
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
                              TitleSerializer, UserSerializer,
-                             SignupSerializer)
+                             SignupSerializer, ObtainTokenSerializer)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -64,11 +67,13 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 @api_view(["POST", ])
+@permission_classes([AllowAny])
 def registration(request):
     serializer = SignupSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -85,3 +90,20 @@ def registration(request):
         recipient_list=[user.email],
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST", ])
+@permission_classes([AllowAny])
+def obtain_token(request):
+    serializer = ObtainTokenSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = get_object_or_404(
+        User,
+        username=serializer.validated_data["username"]
+    )
+    conf_code = serializer.validated_data["confirmation_code"]
+    if default_token_generator.check_token(user, conf_code):
+        inside_token = RefreshToken.for_user(user)
+        access_token = {'token': str(inside_token.access_token)}
+        return Response(access_token, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)

@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
 from django.db.models import Avg
 from rest_framework.validators import UniqueValidator
 from reviews.models import (Category, Comment, Genre, Review, Title,
@@ -120,3 +120,16 @@ class SignupSerializer(serializers.ModelSerializer):
         if value == 'me':
             raise serializers.ValidationError("Your username can't be 'me'")
         return value
+
+
+class ObtainTokenSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=100)
+    confirmation_code = serializers.CharField(max_length=300)
+
+    def validate(self, attrs):
+        user = attrs.get('username')
+        if not User.objects.filter(username=user).exists():
+            raise exceptions.NotFound('There is not such user')
+        # elif conf_code is None:
+        #     raise serializers.ValidationError('this conf_code not exists')
+        return attrs
