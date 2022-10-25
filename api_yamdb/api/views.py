@@ -1,23 +1,19 @@
-from urllib import request
-from rest_framework import (
-    mixins, viewsets, status, permissions, filters
-)
-from rest_framework.decorators import api_view, action
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import AllowAny
-from api.permissions import (
-    AdminPermission, AuthorOrStaffPermission, AdminOrGetRequestPermission
-)
-from rest_framework.decorators import permission_classes
 from django.contrib.auth.tokens import default_token_generator
-from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from rest_framework import filters, mixins, permissions, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title, User
+
+from api.permissions import (AdminOrGetRequestPermission, AdminPermission,
+                             AuthorOrStaffPermission)
 from api.serializers import (CategorySerializer, CommentSerializer,
-                             GenreSerializer, ReviewSerializer,
+                             GenreSerializer, ObtainTokenSerializer,
+                             ReviewSerializer, SignupSerializer,
                              TitleSerializer, UserSerializer,
-                             SignupSerializer, ObtainTokenSerializer,
                              UserSerializerForAdmin)
 
 
@@ -81,11 +77,9 @@ class CommentViewSet(viewsets.ModelViewSet):
         return super(CommentViewSet, self).get_permissions()
 
     def perform_create(self, serializer):
-        title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Title, pk=title_id)
         review_id = self.kwargs.get('review_id')
         review = get_object_or_404(Review, pk=review_id)
-        serializer.save(author=self.request.user, title=title, review=review)
+        serializer.save(author=self.request.user, review=review)
 
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -102,7 +102,7 @@ class Review(models.Model):
         blank=True
     )
     score = models.IntegerField()
-    pub_date = models.DateField('Дата публикации', auto_now_add=True)
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
         constraints = [
@@ -123,4 +123,4 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         blank=True
     )
-    pub_date = models.DateField('Дата публикации', auto_now_add=True)
+    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
