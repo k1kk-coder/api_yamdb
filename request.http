@@ -82,4 +82,10 @@ content-type: application/json
 ###
 
 DELETE http://127.0.0.1:8000/api/v1/titles/49/
- 
+
+###
+
+GET http://127.0.0.1:8000/api/v1/titles/2/reviews/{review_id}/comments/
+
+###
+GET http://127.0.0.1:8000/api/v1/titles/4/reviews/
