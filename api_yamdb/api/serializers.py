@@ -1,6 +1,6 @@
 from rest_framework import serializers, exceptions
 from django.db.models import Avg
-from rest_framework.validators import UniqueValidator
+from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 from reviews.models import (Category, Comment, Genre, Review, Title,
                             User)
 
@@ -76,6 +76,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
         read_only_fields = ('title',)
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=('author', 'title')
+            )
+        ]
 
     def validate_score(self, value):
         if not (1 <= value <= 10):
