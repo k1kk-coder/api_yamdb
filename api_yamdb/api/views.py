@@ -1,6 +1,7 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -8,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title, User
 
+from api.filters import TitlesFilter
 from api.permissions import (AdminOrGetRequestPermission, AdminPermission,
                              AuthorOrStaffPermission)
 from api.serializers import (CategorySerializer, CommentSerializer,
@@ -21,6 +23,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (AdminOrGetRequestPermission,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitlesFilter
 
 
 class GenreViewSet(mixins.CreateModelMixin,
@@ -31,7 +35,7 @@ class GenreViewSet(mixins.CreateModelMixin,
     serializer_class = GenreSerializer
     permission_classes = (AdminOrGetRequestPermission,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('genres__name')
+    search_fields = ('name',)
     lookup_field = 'slug'
 
 
@@ -58,7 +62,7 @@ class CategoryViewSet(mixins.CreateModelMixin,
     serializer_class = CategorySerializer
     permission_classes = (AdminOrGetRequestPermission,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('categories__name')
+    search_fields = ('name',)
     lookup_field = 'slug'
 
 
