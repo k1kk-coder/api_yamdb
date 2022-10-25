@@ -5,6 +5,7 @@ from api.views import (CommentViewSet, TitleViewSet, GenreViewSet,
                        ReviewViewSet, CategoryViewSet, UserViewSet,
                        registration, obtain_token)
 
+
 v1_router = routers.DefaultRouter()
 v1_router.register(r'categories', CategoryViewSet)
 v1_router.register(r'users', UserViewSet)

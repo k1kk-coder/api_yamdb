@@ -1,7 +1,12 @@
-from rest_framework import mixins, viewsets, status, permissions
-from rest_framework.decorators import api_view
+from rest_framework import (
+    mixins, viewsets, status, permissions, filters
+)
+from rest_framework.decorators import api_view, action
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
+from api.permissions import (
+    AdminPermission, AuthorOrStaffPermission, AdminOrGetRequestPermission
+)
 from rest_framework.decorators import permission_classes
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.response import Response
@@ -11,12 +16,14 @@ from reviews.models import Category, Genre, Review, Title, User
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
                              TitleSerializer, UserSerializer,
-                             SignupSerializer, ObtainTokenSerializer)
+                             SignupSerializer, ObtainTokenSerializer,
+                             UserSerializerForAdmin)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    permission_classes = (AdminOrGetRequestPermission,)
 
 
 class GenreViewSet(mixins.CreateModelMixin,
@@ -25,6 +32,9 @@ class GenreViewSet(mixins.CreateModelMixin,
                    viewsets.GenericViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (AdminOrGetRequestPermission,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('genres__name')
     lookup_field = 'slug'
 
 
@@ -48,10 +58,15 @@ class CategoryViewSet(mixins.CreateModelMixin,
                       viewsets.GenericViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (AdminOrGetRequestPermission,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('categories__name')
+    lookup_field = 'slug'
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (AuthorOrStaffPermission,)
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')
@@ -67,9 +82,37 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated)
+    permission_classes = (AdminPermission, )
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    lookup_field = 'username'
+
+    def get_serializer_class(self):
+        serializer_class = self.serializer_class
+        if self.request.user.role == "admin":
+            serializer_class = UserSerializerForAdmin
+        return serializer_class
+
+    @action(
+        methods=["get", "patch"], detail=False, url_path="me",
+        permission_classes=(permissions.IsAuthenticated,),
+        serializer_class=UserSerializer,
+    )
+    def get_profile_info(self, request):
+        user = request.user
+        if request.method == "GET":
+            serializer = self.get_serializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        if request.method == "PATCH":
+            serializer = self.get_serializer(
+                user,
+                data=request.data,
+                partial=True
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 @api_view(["POST", ])
@@ -106,4 +149,4 @@ def obtain_token(request):
         inside_token = RefreshToken.for_user(user)
         access_token = {'token': str(inside_token.access_token)}
         return Response(access_token, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

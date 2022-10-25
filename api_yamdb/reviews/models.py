@@ -1,14 +1,18 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-CHOICES = (
-    ('user', 'USER'),
-    ('moderator', 'MODERATOR'),
-    ('admin', 'ADMIN')
-)
-
 
 class User(AbstractUser):
+    ADMIN = 'admin'
+    USER = 'user'
+    MODERATOR = 'moderator'
+
+    CHOICES = (
+        (USER, 'user'),
+        (ADMIN, 'admin'),
+        (MODERATOR, 'moderator')
+    )
+
     bio = models.TextField(
         verbose_name='Биография',
         blank=True,
@@ -17,9 +21,20 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=50,
         verbose_name='Роль',
-        default='user',
+        default=USER,
         choices=CHOICES,
     )
+
+    class Meta:
+        ordering = ('username',)
+
+    @property
+    def is_admin(self):
+        self.role == User.ADMIN or self.is_superuser
+
+    @property
+    def is_moderator(self):
+        self.role == User.MODERATOR
 
 
 class Category(models.Model):

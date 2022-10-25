@@ -95,9 +95,32 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
+        )
+        read_only_fields = ('role',)
+
+
+class UserSerializerForAdmin(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
+        )
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -116,10 +139,10 @@ class SignupSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'email')
 
-    def validate_username_not_me(self, value):
-        if value == 'me':
+    def validate(self, attrs):
+        if attrs.get('username') == 'me':
             raise serializers.ValidationError("Your username can't be 'me'")
-        return value
+        return attrs
 
 
 class ObtainTokenSerializer(serializers.Serializer):
@@ -128,8 +151,9 @@ class ObtainTokenSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         user = attrs.get('username')
+        # conf_code = attrs.get('confirmation_code')
         if not User.objects.filter(username=user).exists():
             raise exceptions.NotFound('There is not such user')
-        # elif conf_code is None:
+        # elif conf_code is :
         #     raise serializers.ValidationError('this conf_code not exists')
         return attrs
