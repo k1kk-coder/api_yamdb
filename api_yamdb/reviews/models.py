@@ -70,6 +70,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre,
         through='TitlesGenres',
+        related_name="titles",
         through_fields=('title', 'genre'))
 
     def __str__(self) -> str:
