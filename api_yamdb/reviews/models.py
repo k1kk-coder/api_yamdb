@@ -105,7 +105,12 @@ class Review(models.Model):
     pub_date = models.DateField('Дата публикации', auto_now_add=True)
 
     class Meta:
-        unique_together = ('author', 'title')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'],
+                name='unique_author_title_review'
+            )
+        ]
 
 
 class Comment(models.Model):

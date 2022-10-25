@@ -151,9 +151,6 @@ class ObtainTokenSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         user = attrs.get('username')
-        # conf_code = attrs.get('confirmation_code')
         if not User.objects.filter(username=user).exists():
             raise exceptions.NotFound('There is not such user')
-        # elif conf_code is :
-        #     raise serializers.ValidationError('this conf_code not exists')
         return attrs

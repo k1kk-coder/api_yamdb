@@ -1,3 +1,4 @@
+from urllib import request
 from rest_framework import (
     mixins, viewsets, status, permissions, filters
 )
@@ -40,6 +41,7 @@ class GenreViewSet(mixins.CreateModelMixin,
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = (AuthorOrStaffPermission,)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
@@ -72,6 +74,11 @@ class CommentViewSet(viewsets.ModelViewSet):
         review_id = self.kwargs.get('review_id')
         review = get_object_or_404(Review, pk=review_id)
         return review.comments.all()
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            self.permission_classes = (permissions.IsAuthenticated,)
+        return super(CommentViewSet, self).get_permissions()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
