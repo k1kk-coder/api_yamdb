@@ -118,21 +118,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
         )
-        read_only_fields = ('role',)
-
-
-class UserSerializerForAdmin(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
-
-    class Meta:
-        model = User
-        fields = (
-            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
-        )
 
 
 class SignupSerializer(serializers.ModelSerializer):

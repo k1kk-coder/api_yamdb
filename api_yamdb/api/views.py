@@ -15,8 +15,7 @@ from api.permissions import (AdminOrGetRequestPermission, AdminPermission,
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ObtainTokenSerializer,
                              ReviewSerializer, SignupSerializer,
-                             TitleSerializer, UserSerializer,
-                             UserSerializerForAdmin)
+                             TitleSerializer, UserSerializer)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -100,29 +99,27 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         serializer_class = self.serializer_class
         if self.request.user.role == "admin":
-            serializer_class = UserSerializerForAdmin
+            serializer_class = UserSerializer
         return serializer_class
 
     @action(
-        methods=["get", "patch"], detail=False, url_path="me",
+        methods=["get", "patch"], detail=False,
         permission_classes=(permissions.IsAuthenticated,),
         serializer_class=UserSerializer,
     )
-    def get_profile_info(self, request):
+    def me(self, request):
         user = request.user
         if request.method == "GET":
             serializer = self.get_serializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        if request.method == "PATCH":
-            serializer = self.get_serializer(
-                user,
-                data=request.data,
-                partial=True
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        serializer = self.get_serializer(
+            user,
+            data=request.data,
+            partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(role=user.role, partial=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["POST", ])
