@@ -77,11 +77,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('title',)
 
-    def validate_score(self, value):
-        if not (1 <= value <= 10):
-            raise serializers.ValidationError('Поставьте оценку от 1 до 10')
-        return value
-
     def validate(self, review):
         if self.context['request'].method != 'POST':
             return review
@@ -121,16 +116,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignupSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
-    email = serializers.EmailField(
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
+    forbidden_characters = "!@#$%+=&?"
+    username = serializers.CharField()
+    email = serializers.EmailField()
 
     class Meta:
         model = User
@@ -138,7 +126,27 @@ class SignupSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs.get('username') == 'me':
-            raise serializers.ValidationError("Your username can't be 'me'")
+            raise serializers.ValidationError(
+                f"Your username can't be {attrs.get('username')}")
+
+        if User.objects.filter(
+            username__iexact=attrs.get('username')
+        ).exists():
+            raise serializers.ValidationError(
+                f'User with nickname {attrs.get("username")} already exists.'
+            )
+
+        if User.objects.filter(email__iexact=attrs.get('email')).exists():
+            raise serializers.ValidationError(
+                f'User with email {attrs.get("email")} already exists.'
+            )
+
+        for symbol in attrs.get('username'):
+            if symbol in self.forbidden_characters:
+                raise serializers.ValidationError(
+                    f'This symbol: {symbol} is forbidden'
+                )
+
         return attrs
 
 

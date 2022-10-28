@@ -1,5 +1,5 @@
 The YaMDb project collects user reviews of works. 
-_ With this project, you can:_
+With this project, you can:
 - send text reviews for the works 
 - rate the work
 - comment on other users' reviews

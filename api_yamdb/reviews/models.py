@@ -1,4 +1,6 @@
+import datetime
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
@@ -27,6 +29,7 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ('username',)
+        verbose_name = "User"
 
     @property
     def is_admin(self):
@@ -53,13 +56,20 @@ class Genre(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(max_length=50, unique=True)
 
+    class Meta:
+        verbose_name = 'Genres'
+
     def __str__(self):
         return self.name
 
 
 class Title(models.Model):
     name = models.CharField(max_length=200)
-    year = models.IntegerField()
+    year = models.PositiveSmallIntegerField(
+        verbose_name='Year',
+        validators=[MaxValueValidator(datetime.date.today().year)],
+        db_index=True,
+    )
     rating = models.IntegerField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     category = models.ForeignKey(
@@ -72,6 +82,9 @@ class Title(models.Model):
         through='TitlesGenres',
         related_name="titles",
         through_fields=('title', 'genre'))
+
+    class Meta:
+        verbose_name = 'Titles'
 
     def __str__(self) -> str:
         return self.name
@@ -102,7 +115,13 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         blank=True
     )
-    score = models.IntegerField()
+    score = models.PositiveIntegerField(
+        verbose_name="rating",
+        validators=[
+            MinValueValidator(1, 'The score cannot be less than 1'),
+            MaxValueValidator(10, 'The score cannot be more than 10')
+        ]
+    )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
 
     class Meta:
@@ -112,6 +131,8 @@ class Review(models.Model):
                 name='unique_author_title_review'
             )
         ]
+        ordering = ["-pub_date"]
+        verbose_name = "Reviews"
 
 
 class Comment(models.Model):
@@ -125,3 +146,6 @@ class Comment(models.Model):
         blank=True
     )
     pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Comments"
