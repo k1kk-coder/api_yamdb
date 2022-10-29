@@ -67,7 +67,7 @@ class Title(models.Model):
     name = models.CharField(max_length=200)
     year = models.PositiveSmallIntegerField(
         verbose_name='Year',
-        validators=[MaxValueValidator(datetime.date.today().year)],
+        validators=[MaxValueValidator(2050)],
         db_index=True,
     )
     rating = models.IntegerField(blank=True, null=True)
